@@ -1,0 +1,277 @@
+[
+    {
+        "name": "titleScreen",
+        "type": "group",
+        "label": "Title Screen",
+        "expanded": true,
+        "fields": [
+            {
+                "name": "title",
+                "type": "group",
+                "label": "Title",
+                "expanded": true,
+                "fields": [
+                    {
+                        "name": "text",
+                        "type": "text",
+                        "label": "Title"
+                    },
+                    {
+                        "name": "display",
+                        "type": "boolean",
+                        "label": "Display Title",
+                        "description": "Wether or not to show the title as a headline at the start of the personality quiz.",
+                        "default": true
+                    }
+                ]
+            },
+            {
+                "name": "image",
+                "type": "group",
+                "label": "Optional: Image",
+                "optional": true,
+                "fields": [
+                    {
+                        "name": "file",
+                        "type": "image",
+                        "label": "File"
+                    },
+                    {
+                        "name": "alt",
+                        "type": "text",
+                        "label": "Alt text",
+                        "description": "Alternative text if the browser is unable to load the image."
+                    },
+                    {
+                        "name": "position",
+                        "type": "select",
+                        "label": "Position",
+                        "options": [
+                            {
+                                "label": "Background image",
+                                "value": "background-image"
+                            },
+                            {
+                                "label": "Top",
+                                "value": "top"
+                            }
+                        ]
+                    }
+                ]
+            }
+        ]
+    },
+    {
+        "name": "resultScreen",
+        "type": "group",
+        "label": "Result screen",
+        "fields": [
+            {
+                "name": "animation",
+                "type": "select",
+                "label": "Animation",
+                "default": "none",
+                "options": [
+                    {
+                        "label": "None",
+                        "value": "none"
+                    },
+                    {
+                        "label": "Fade in",
+                        "value": "fade-in"
+                    },
+                    {
+                        "label": "Wheel of Fortune",
+                        "value": "wheel"
+                    }
+                ]
+            },
+            {
+                "name": "displayTitle",
+                "type": "boolean",
+                "label": "Display personality title?",
+                "default": true
+            },
+            {
+                "name": "displayDescription",
+                "type": "boolean",
+                "label": "Display description?",
+                "default": true
+            }
+        ]
+    },
+    {
+        "name": "personalities",
+        "type": "list",
+        "label": "Personality",
+        "entity": "personality",
+        "min": 2,
+        "max": 10,
+        "field": {
+            "name": "personality",
+            "type": "group",
+            "label": "Personality",
+            "fields": [
+                {
+                    "name": "name",
+                    "type": "text",
+                    "label": "Personality name",
+                    "description": "Personality name, used to identify answers in the "
+                },
+                {
+                    "name": "description",
+                    "type": "text",
+                    "label": "Description",
+                    "maxLength": 450,
+                    "widget": "textarea"
+                },
+                {
+                    "name": "image",
+                    "type": "group",
+                    "label": "Optional: Image",
+                    "optional": true,
+                    "fields": [
+                        {
+                            "name": "file",
+                            "type": "image",
+                            "label": "Image",
+                            "description": "An image to display on the result screen."
+                        },
+                        {
+                            "name": "alt",
+                            "type": "text",
+                            "label": "Alt text",
+                            "description": "Alternative text if the browser is unable to load the image."
+                        }
+                    ]
+                }
+            ]
+        }
+    },
+    {
+        "name": "questions",
+        "type": "list",
+        "label": "Questions",
+        "entity": "question",
+        "field": {
+            "name": "question",
+            "type": "group",
+            "label": "Question",
+            "fields": [
+                {
+                    "name": "text",
+                    "type": "text",
+                    "label": "Question"
+                },
+                {
+                    "name": "image",
+                    "type": "group",
+                    "label": "Optional: Image",
+                    "description": "Image displayed at the top of the screen above or below the question text.",
+                    "optional": true,
+                    "fields": [
+                        {
+                            "name": "file",
+                            "type": "image",
+                            "label": "File"
+                        },
+                        {
+                            "name": "alt",
+                            "type": "text",
+                            "label": "Alt text",
+                            "description": "Alternative text if the browser is unable to load the image."
+                        }
+                    ]
+                },
+                {
+                    "name": "answers",
+                    "type": "list",
+                    "label": "Answers",
+                    "entity": "answer",
+                    "min": 2,
+                    "max": 6,
+                    "field": {
+                        "name": "answer",
+                        "type": "group",
+                        "label": "Answer",
+                        "fields": [
+                            {
+                                "name": "text",
+                                "type": "text",
+                                "label": "text"
+                            },
+                            {
+                                "name": "personality",
+                                "type": "text",
+                                "label": "Personality"
+                            },
+                            {
+                                "name": "image",
+                                "type": "group",
+                                "label": "Optional: Image",
+                                "optional": true,
+                                "fields": [
+                                    {
+                                        "name": "file",
+                                        "type": "image",
+                                        "label": "File"
+                                    },
+                                    {
+                                        "name": "alt",
+                                        "type": "text",
+                                        "label": "Alt text",
+                                        "description": "Alternative text if the browser is unable to load the image."
+                                    }
+                                ]
+                            }
+                        ]
+                    }
+                }
+            ]
+        }
+    },
+    {
+        "label": "Start",
+        "name": "startText",
+        "type": "text",
+        "default": "Start",
+        "description": "Text displayed on the start quiz button on the title card."
+    },
+    {
+        "label": "Progress text",
+        "name": "progressText",
+        "type": "text",
+        "default": "@question of @total",
+        "description": "Progress text, variables available: @question and @total. Example: '@question of @total'"
+    },
+    {
+        "name": "retakeText",
+        "label": "Retake",
+        "type": "text",
+        "default": "Retake the quiz",
+        "description": "Retake text"
+    },
+    {
+        "name": "animation",
+        "type": "boolean",
+        "label": "Animation",
+        "default": true,
+        "description": "Uncheck to turn off all animation"
+    },
+    {
+        "name": "buttonColor",
+        "type": "text",
+        "label": "Button Accent",
+        "description": "Change the color of the button borders and the animation color fill",
+        "default": "4D5DAA",
+        "widget": "colorSelector"
+    },
+    {
+        "name": "progressbarColor",
+        "type": "text",
+        "label": "Progressbar Color",
+        "description": "Determines the color of the progress bar",
+        "default": "38B755",
+        "widget": "colorSelector"
+    }
+]

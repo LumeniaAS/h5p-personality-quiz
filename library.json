@@ -1,0 +1,32 @@
+{
+  "title": "Personality Quiz",
+  "machineName": "H5P.PersonalityQuiz",
+  "description": "Personality Quiz",
+  "majorVersion": 1,
+  "minorVersion": 0,
+  "patchVersion": 0,
+  "runnable": 1,
+  "fullScreen": 1,
+  "author": "Lumenia As",
+  "license": "MIT",
+  "preloadedJs": [
+    {
+      "path": "js/personalityQuiz.js"
+    },
+    {
+      "path": "js/wheelAnimation.js"
+    }
+  ],
+  "preloadedCss": [
+    {
+      "path": "css/personalityQuiz.css"
+    }
+  ],
+  "editorDependencies": [
+    {
+      "machineName": "H5PEditor.ColorSelector",
+      "majorVersion": 1,
+      "minorVersion": 0
+    }
+  ]
+}
