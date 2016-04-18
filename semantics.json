@@ -41,21 +41,6 @@
                         "type": "text",
                         "label": "Alt text",
                         "description": "Alternative text if the browser is unable to load the image."
-                    },
-                    {
-                        "name": "position",
-                        "type": "select",
-                        "label": "Position",
-                        "options": [
-                            {
-                                "label": "Background image",
-                                "value": "background-image"
-                            },
-                            {
-                                "label": "Top",
-                                "value": "top"
-                            }
-                        ]
                     }
                 ]
             }
