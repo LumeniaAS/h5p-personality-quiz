@@ -20,6 +20,7 @@
 .h5p-personality-quiz {
     font-size: 1.5rem;
     font-weight: 400;
+    font-family: sans-serif;
     color: rgb(60, 62, 64);
     border: none;
     text-transform: none;
@@ -37,6 +38,7 @@ h2.h5p-personality-quiz {
 
 button.h5p-personality-quiz {
     font-size: 2rem;
+    letter-spacing: 0px;
 }
 
 .h5p-personality-quiz.container {
@@ -49,8 +51,12 @@ button.h5p-personality-quiz {
     background: rgb(233, 239, 247);
     color: rgb(60, 62, 64);
     border-radius: 5px;
-    padding: 0.5rem 1.5rem;
+    padding: 0.8rem 1.5rem;
     cursor: pointer;
+    height: auto;
+    border: none;
+    line-height: 1rem;
+    font-size: 1.5rem;
 }
 
 .h5p-personality-quiz .background {
@@ -85,7 +91,6 @@ button.h5p-personality-quiz {
 
 .h5p-personality-quiz .slide {
     height: 100%;
-    /* min-height: 320px; */
 }
 
 .h5p-personality-quiz .title-card {
@@ -104,9 +109,10 @@ button.h5p-personality-quiz {
     width: 100%;
     color: rgb(60, 62, 64);
     background-color: rgba(233, 239, 247, 0.8);
-    padding: 1rem 0;
+    padding: 1.5rem 0;
     margin: 0;
     text-align: center;
+    font-size: 2rem;
 }
 
 .h5p-personality-quiz .start-button-wrapper {
@@ -134,6 +140,7 @@ button.h5p-personality-quiz {
 .h5p-personality-quiz .progress-text {
     color: white;
     margin-left: 1rem;
+    font-size: 1rem;
 }
 
 .h5p-personality-quiz .question {
@@ -144,7 +151,7 @@ button.h5p-personality-quiz {
 }
 
 .h5p-personality-quiz.question-text {
-    margin: 2rem;
+    margin-bottom: 1.5rem;
 }
 
 .h5p-personality-quiz .question-image {
@@ -164,6 +171,7 @@ button.h5p-personality-quiz {
     margin: 1rem auto;
     width: 80%;
     cursor: pointer;
+    font-size: 1rem;
 }
 
 .h5p-personality-quiz .answers-wrapper {
