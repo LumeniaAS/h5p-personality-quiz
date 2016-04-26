@@ -2,10 +2,18 @@
     PersonalityQuiz.WheelAnimation = function (quiz, personalities, width, height, _getPath) {
         var self = this;
 
+        function clamp (value, low, high) {
+            return Math.min(Math.max(low, value), high);
+        };
+
         // TODO (Emil): Some of these variables should probably be private.
         // NOTE (Emil): Choose the smallest if the dimensions vary, for simplicity.
-        self.width = Math.min(width, height);
-        self.height = Math.min(width, height);
+        var side = Math.min(width, height);
+        var min = 320;
+        var max = 800;
+
+        self.width = clamp(side, min, max);
+        self.height = clamp(side, min, max);
 
         self.offscreen = document.createElement('canvas');
 
@@ -67,10 +75,6 @@
             } else {
                 return self.colors.odd;
             }
-        };
-
-        function clamp (value, low, high) {
-            return Math.min(Math.max(low, value), high);
         };
 
         function getScale (t) {

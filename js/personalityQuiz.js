@@ -300,7 +300,8 @@ H5P.PersonalityQuiz = (function ($) {
 
         var canvas = {
             id: 'wheel',
-            size: 300
+            width: 300,
+            height: 300,
         };
 
         self.attach = function ($container) {
@@ -309,10 +310,18 @@ H5P.PersonalityQuiz = (function ($) {
             if (self.$container === undefined) {
                 self.$container = $container;
 
-                canvas.size = $container.width() * 0.8;
 
                 if (animation && params.resultScreen.animation === 'wheel') {
-                    self.wheel = new PersonalityQuiz.WheelAnimation(self, self.personalities, canvas.size, canvas.size, _getPath);
+                    canvas.width = $container.width() * 0.8;
+                    canvas.height = $container.height();
+
+                    self.wheel = new PersonalityQuiz.WheelAnimation(
+                        self,
+                        self.personalities,
+                        canvas.width,
+                        canvas.height,
+                        _getPath
+                    );
                 }
 
                 var $quiz = buildQuiz(self, params);
