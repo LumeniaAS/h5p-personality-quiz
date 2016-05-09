@@ -4,9 +4,8 @@
   "description": "Personality Quiz",
   "majorVersion": 1,
   "minorVersion": 0,
-  "patchVersion": 2,
+  "patchVersion": 3,
   "runnable": 1,
-  "fullScreen": 1,
   "author": "Lumenia AS",
   "license": "MIT",
   "preloadedJs": [

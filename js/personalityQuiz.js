@@ -1,59 +1,54 @@
 var H5P = H5P || {};
 
 H5P.PersonalityQuiz = (function ($) {
-    // Array.find polyfill
-    if (!Array.prototype.find) {
-        Array.prototype.find = function(predicate) {
-            if (this === null) {
-                throw new TypeError('Array.prototype.find called on null or undefined');
-            }
-            if (typeof predicate !== 'function') {
-                throw new TypeError('predicate must be a function');
-            }
-
-            var list = Object(this);
-            var length = list.length >>> 0;
-            var thisArg = arguments[1];
-            var value;
-
-            for (var i = 0; i < length; i++) {
-            value = list[i];
-            if (predicate.call(thisArg, value, i, list)) {
-                return value;
-            }
-            }
-            return undefined;
-        };
-    }
-
     function PersonalityQuiz (params, id) {
-        var animation = (
-            document.querySelector('body').style.animationName !== undefined
-        ) && params.animation;
+        var self = this;
+
+        self.resultAnimation = params.resultScreen.animation;
+        self.resultTitle = params.resultScreen.displayTitle;
+        self.resultDescription = params.resultScreen.displayDescription;
+        self.progressText = params.progressText;
+        self.personalities = params.personalities;
+        self.numQuestions = params.questions.length;
+
+        self.slides = (2 + self.numQuestions);
+        self.slidePercentage = 100 / self.numQuestions;
+
+        self.loadingImages = [];
+
+        var canvas = {
+            id: 'wheel',
+            width: 300,
+            height: 300,
+        };
+
+        var body = document.querySelector('body');
+        var animation = ((body.style.animationName !== undefined) && params.animation);
 
         function _getPath (path) {
             return H5P.getPath(path, id);
-        };
+        }
 
         function classes () {
-            classNames = 'h5p-personality-quiz';
+            var args = Array.prototype.slice.call(arguments);
+            var classNames = 'h5p-personality-quiz';
 
-            for (var i = 0; i < arguments.length; i++)
-            {
-                classNames += ' ' + arguments[i];
-            }
+            args.forEach(function (argument) {
+                classNames += ' ' + argument;
+            });
 
             return classNames;
-        };
+        }
 
         function interpolate (str, variables) {
-            for (var property in variables) {
-                if (!variables.hasOwnProperty(property)) continue;
-                str = str.replace('@' + property, variables[property]);
-            }
+            var keys = Object.keys(variables);
+
+            keys.forEach(function (key) {
+                str = str.replace('@' + key, variables[key]);
+            });
 
             return str;
-        };
+        }
 
         function createButton (type, attributes) {
             var $button = $('<' + type + '>', attributes);
@@ -63,7 +58,7 @@ H5P.PersonalityQuiz = (function ($) {
             $button.css('background-position', '100%');
 
             return $button;
-        };
+        }
 
         function addButtonListener ($element, listener) {
             if (animation) {
@@ -79,14 +74,14 @@ H5P.PersonalityQuiz = (function ($) {
                     listener();
                 });
             }
-        };
+        }
 
         function buildCanvas () {
-            $wrapper = $('<div>', {
+            var $wrapper = $('<div>', {
                 'class': classes('wheel-container slide')
             });
 
-            $canvas = $('<canvas>', {
+            var $canvas = $('<canvas>', {
                 'class': classes('wheel-canvas'),
                 'id': canvas.id
             });
@@ -97,7 +92,7 @@ H5P.PersonalityQuiz = (function ($) {
             $wrapper.hide();
 
             return $wrapper;
-        };
+        }
 
         function buildQuiz (quiz, data) {
             var $container = $('<div>', { 'class': classes('container') });
@@ -109,18 +104,18 @@ H5P.PersonalityQuiz = (function ($) {
 
             data.questions.forEach(function (question) {
                 var $question = buildQuestion(quiz, question);
-                $question.hide();
 
                 $slides.append($question);
             });
 
             if (animation && self.resultAnimation === 'wheel') {
-                $canvas = buildCanvas();
+                var $canvas = buildCanvas();
 
                 $slides.append($canvas);
             }
 
             var $result = buildResult(quiz, data.resultScreen, data.retakeText);
+
             $result.hide();
 
             $slides.append($result);
@@ -129,11 +124,11 @@ H5P.PersonalityQuiz = (function ($) {
             quiz.$progressbar = $bar;
             quiz.$progressText = $bar.children('.progress-text');
             quiz.$wrapper = $container;
-            quiz.$slides = $slides;
+            quiz.$slides = $slides.children();
             quiz.$result = $result;
 
-            return $container
-        };
+            return $container;
+        }
 
         function buildProgressbar () {
             var $bar = $('<div>', { 'class': classes('progressbar') });
@@ -151,7 +146,7 @@ H5P.PersonalityQuiz = (function ($) {
             $bar.append($text);
 
             return $bar;
-        };
+        }
 
         function buildTitleCard (quiz, data, startText) {
             var $card = $('<div>', { 'class': classes('title-card', 'slide', 'background') });
@@ -179,7 +174,7 @@ H5P.PersonalityQuiz = (function ($) {
             $card.append($content);
 
             return $card;
-        };
+        }
 
         function buildQuestion (quiz, question) {
             var $slide = $('<div>', { 'class': classes('quiz', 'slide' ) });
@@ -196,6 +191,13 @@ H5P.PersonalityQuiz = (function ($) {
                     'class': classes('question-image'),
                     'src': path
                 });
+
+                var deferred = $.Deferred();
+                $image.on('load', function () {
+                    deferred.resolve();
+                });
+                self.loadingImages.push(deferred.promise());
+
                 $wrapper.append($image);
             }
 
@@ -203,7 +205,7 @@ H5P.PersonalityQuiz = (function ($) {
             $slide.append($wrapper);
 
             var images = false;
-            question.answers.forEach(function (answer) { images = images || answer.image.file !== undefined });
+            question.answers.forEach(function (answer) { images = images || answer.image.file !== undefined; });
 
             if (images) {
                 var $imageAnswer = buildImageAnswer(question.answers, quiz.answerListener);
@@ -214,7 +216,7 @@ H5P.PersonalityQuiz = (function ($) {
             }
 
             return $slide;
-        };
+        }
 
         function buildImageAnswer (answers, listener) {
             var $wrapper  = $('<div>', { 'class': classes('answers-wrapper') });
@@ -244,7 +246,7 @@ H5P.PersonalityQuiz = (function ($) {
             $wrapper.append($answers);
 
             return $wrapper;
-        };
+        }
 
         function buildAnswer (answers, listener) {
             var $wrapper  = $('<div>', { 'class': classes('answers-wrapper') });
@@ -264,7 +266,7 @@ H5P.PersonalityQuiz = (function ($) {
             $wrapper.append($answers);
 
             return $wrapper;
-        };
+        }
 
         function buildResult (quiz, data, retakeText) {
             var $result = $('<div>', { 'class': classes('result', 'slide') });
@@ -279,37 +281,34 @@ H5P.PersonalityQuiz = (function ($) {
                 quiz.trigger('personality-quiz-restart');
             });
 
-            $wrapper.append($button);
+            self.$resultWrapper = $wrapper;
+            $result.append($button);
             $result.append($wrapper);
 
             return $result;
-        };
+        }
 
-        var self = this;
+        function attach ($container) {
+            self.loadingImages = [];
+            self.reset();
 
-        self.resultAnimation = params.resultScreen.animation;
-        self.resultTitle = params.resultScreen.displayTitle;
-        self.resultDescription = params.resultScreen.displayDescription;
-        self.progressText = params.progressText;
-        self.personalities = params.personalities;
-        self.numQuestions = params.questions.length;
+            var $quiz = buildQuiz(self, params);
 
-        self.slides = (2 + self.numQuestions);
-        self.slideWidth = 100 / self.slides;
-        self.length = 100 / self.numQuestions;
+            $container.append($quiz);
 
-        var canvas = {
-            id: 'wheel',
-            width: 300,
-            height: 300,
-        };
+            // NOTE (Emil): Wait for images to load, if there are any.
+            // If there aren't any images to wait for this function is called immediately.
+            $.when.apply(null, self.loadingImages).done(function () {
+                var height = 0;
 
-        self.attach = function ($container) {
-            var self = this;
+                self.$slides.each(function () {
+                    if (this.clientHeight > height)
+                    {
+                        height = this.clientHeight;
+                    }
+                });
 
-            if (self.$container === undefined) {
-                self.$container = $container;
-
+                $quiz.height(height);
 
                 if (animation && params.resultScreen.animation === 'wheel') {
                     canvas.width = $container.width() * 0.8;
@@ -323,21 +322,21 @@ H5P.PersonalityQuiz = (function ($) {
                         _getPath
                     );
                 }
+            });
+        }
 
-                var $quiz = buildQuiz(self, params);
+        self.attach = function ($container) {
+            if (self.$container === undefined) {
+                self.$container = $container;
 
-                $container.append($quiz);
-
-                self.reset();
+                attach(self.$container);
             }
         };
 
         self.setResult = function (personality) {
             if (self.$canvas) {
-                var wheel = self.wheel;
-                wheel.attach(canvas.id);
-                wheel.setTarget(personality);
-
+                self.wheel.attach(canvas.id);
+                self.wheel.setTarget(personality);
                 self.wheel.animate();
             }
 
@@ -351,39 +350,40 @@ H5P.PersonalityQuiz = (function ($) {
             var showResult = self.resultTitle || self.resultDescription;
 
             if (showResult) {
-                $personality = $('<div>', { 'class': classes('personality') });
+                var $personality = $('<div>', { 'class': classes('personality') });
 
                 if (self.resultTitle) {
-                    $title = $('<h2>', { 'html': personality.name });
+                    var $title = $('<h2>', { 'html': personality.name });
                     $personality.append($title);
                 }
 
                 if (self.resultDescription) {
-                    $description = $('<p>', { 'html': personality.description });
+                    var $description = $('<p>', { 'html': personality.description });
                     $personality.append($description);
                 }
 
-                self.$result.prepend($personality);
+                self.$resultWrapper.prepend($personality);
             }
-        }
+        };
 
         self.calculatePersonality = function () {
             var self = this;
 
             var max = self.personalities[0].count;
             var index = 0;
-            for (var i = 1; i < self.personalities.length; i++) {
-                if (max < self.personalities[i].count) {
-                    max = self.personalities[i].count;
+
+            self.personalities.forEach(function (personality, i) {
+                if (max < personality.count) {
+                    max = personality.count;
                     index = i;
                 }
-            }
+            });
 
             return self.personalities[index];
         };
 
         self.updateProgress = function (index) {
-            var percentage = 100 - (self.index - 1) * self.length;
+            var percentage = 100 - (self.index - 1) * self.slidePercentage;
             self.$progressbar.css('background-position', String(percentage) + '%');
 
             var text = interpolate(self.progressText, {
@@ -394,10 +394,9 @@ H5P.PersonalityQuiz = (function ($) {
             self.$progressText.html(text);
         };
 
-        self.next = function (event) {
-            var $slides = self.$slides.children();
-            $slides.eq(self.index).hide();
-            $slides.eq(self.index + 1).show();
+        self.next = function () {
+            self.$slides.eq(self.index).hide();
+            self.$slides.eq(self.index + 1).show();
 
             self.index += 1;
 
@@ -436,20 +435,6 @@ H5P.PersonalityQuiz = (function ($) {
             }
         };
 
-        self.straightToResult = function ($container, parmas) {
-            self.$result = buildResult(self, params.resultScreen, params.retakeText);
-
-            self.$wrapper = $('div', { 'class': classes('container') });
-
-            self.$wrapper.append(self.$slides);
-            self.$container.append(self.$progressbar, self.$wrapper);
-            self.$progressbar = $('<div>');
-
-            self.$container.append(self.$wrapper);
-
-            self.trigger('personality-quiz-completed');
-        };
-
         self.reset = function () {
             self.personalities.map(function (e) { e.count = 0; });
             self.index = 0;
@@ -464,13 +449,13 @@ H5P.PersonalityQuiz = (function ($) {
             if (event !== undefined && event.data !== undefined) {
                 var answers = event.data.split(', ');
 
-                for (var i = 0; i < answers.length; i++) {
-                    self.personalities.forEach(function (element, index) {
-                        if (element.name == answers[i]) {
-                            element.count++;
+                answers.forEach(function (answer) {
+                    self.personalities.forEach(function (personality) {
+                        if (personality.name === answer) {
+                            personality.count++;
                         }
                     });
-                }
+                });
             }
 
             self.next();
@@ -496,13 +481,9 @@ H5P.PersonalityQuiz = (function ($) {
 
         self.on('personality-quiz-restart', function () {
             self.$container.empty();
-
-            var $quiz = buildQuiz(self, params);
-            self.$container.append($quiz);
-
-            self.reset();
+            attach(self.$container);
         });
-    };
+    }
 
     PersonalityQuiz.prototype = Object.create(H5P.EventDispatcher.prototype);
     PersonalityQuiz.prototype.constructor = PersonalityQuiz;

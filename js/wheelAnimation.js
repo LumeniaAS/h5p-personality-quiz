@@ -1,10 +1,8 @@
+var H5P = H5P || {};
+
 (function ($, PersonalityQuiz) {
     PersonalityQuiz.WheelAnimation = function (quiz, personalities, width, height, _getPath) {
         var self = this;
-
-        function clamp (value, low, high) {
-            return Math.min(Math.max(low, value), high);
-        };
 
         // TODO (Emil): Some of these variables should probably be private.
         // NOTE (Emil): Choose the smallest if the dimensions vary, for simplicity.
@@ -19,7 +17,7 @@
 
         self.offscreen.width = Math.max(self.width - 25, 500);
         self.offscreen.height = Math.max(self.height - 25, 500);
-        self.secondary = self.offscreen.getContext('2d');
+        self.offscreen.context = self.offscreen.getContext('2d');
 
         self.nubArrowSize = self.width * 0.1;
         self.nubRadius = self.width * 0.06;
@@ -57,13 +55,18 @@
                 frame: 'rgb(255, 255, 255)'
             };
 
-            drawOffscreen(self.secondary, self.personalities);
+            drawOffscreen(self.offscreen.context, self.personalities);
         }
+
+        function clamp (value, low, high) {
+            return Math.min(Math.max(low, value), high);
+        }
+
 
         function reset () {
             self.rotation = 0;
             self.minRotation = 6 * (Math.PI * 2) + ((3 * Math.PI) / 2) - (self.segmentAngle / 2);
-        };
+        }
 
         function getPattern (personality, index) {
             if (personality.image.pattern) {
@@ -75,41 +78,30 @@
             } else {
                 return self.colors.odd;
             }
-        };
-
-        function getScale (t) {
-            var t = clamp(t, 0.01, 1);
-
-            if (t < 0.3) {
-                return (t / 0.3);
-            } else {
-                return 1 - (t / 0.3);
-            }
-        };
+        }
 
         function load () {
-            var counter = 0;
+            self.loadingImages = [];
 
-            for (var i = 0; i < self.personalities.length; i++) {
+            self.personalities.forEach(function (personality) {
                 var image = new Image();
-                var personality = self.personalities[i];
+                var deferred = $.Deferred();
 
-                image.addEventListener('load', (
-                    function (personality) {
-                        return function () {
-                            personality.image.pattern = self.secondary.createPattern(this, 'no-repeat');
-                            counter++;
+                image.addEventListener('load', function () {
+                    personality.image.pattern = self.offscreen.context.createPattern(this, 'no-repeat');
+                    deferred.resolve();
+                });
 
-                            if (counter === self.personalities.length) {
-                                drawOffscreen(self.secondary, self.personalities);
-                            }
-                        }
-                    })(personality)
-                );
                 image.src = _getPath(personality.image.file.path);
-                self.images.push({ name: personality.name, data: image});
-            }
-        };
+                self.images.push({ name: personality.name, data: image });
+                self.loadingImages.push(deferred);
+            });
+
+            // NOTE(Emil): When all the images are loaded we can prerender the offscreen buffer.
+            $.when.apply(null, self.loadingImages).done(function () {
+                drawOffscreen(self.offscreen.context, self.personalities);
+            });
+        }
 
         function drawSegment (context, center, radius, fromAngle, toAngle, fillStyle) {
             context.beginPath();
@@ -124,14 +116,14 @@
             context.stroke();
 
             context.closePath();
-        };
+        }
 
         function drawText (context, text, x, y, maxWidth) {
             context.fillStyle = self.colors.text;
-            context.font = '24px Arial'
+            context.font = '24px Arial';
 
             context.fillText(text, x, y, maxWidth);
-        };
+        }
 
         function drawWheel (context, rotation, canvas) {
             context.save();
@@ -149,7 +141,7 @@
             context.drawImage(canvas, 0, 0);
 
             context.restore();
-        };
+        }
 
         function drawNub (context, center, radius, color) {
             context.fillStyle = color;
@@ -164,7 +156,7 @@
             context.fill();
 
             context.closePath();
-        };
+        }
 
         function drawOffscreen (context, personalities) {
             context.textBaseline = 'middle';
@@ -182,8 +174,6 @@
                 var pattern = getPattern(personality, i);
 
                 var open = i * angle;
-                var close = (i + 1) * angle;
-
                 var offset = { x: 0, y: 0 };
 
                 if (personality.image.file) {
@@ -191,7 +181,7 @@
                     offset.y = (personality.image.file.height - radius) / 2;
                 }
 
-                // NOTE (Emil): Assumes that the center of the image is the most interessting.
+                // NOTE (Emil): Assumes that the center of the image is the most interesting.
                 context.save();
 
                 context.translate(center.x, center.y);
@@ -209,17 +199,13 @@
 
                 context.restore();
 
+                // NOTE (Emil): Draw the personality name if there are no images.
                 if (self.images.length < self.personalities.length) {
                     context.save();
 
                     context.translate(center.x, center.y);
                     context.rotate(open + halfAngle);
                     context.translate(-center.x, -center.y);
-
-                    var inner = center.x + (self.nubRadius * 2);
-                    var outer = center.x + radius;
-                    var measure = context.measureText(personality.name);
-                    var x = center.x + ((outer - inner) / 2) - (measure.width / 2);
 
                     drawText(
                         context,
@@ -232,24 +218,24 @@
                     context.restore();
                 }
             }
-        };
+        }
 
         self.attach = function (id) {
             self.onscreen = document.querySelector('#' + id);
             self.onscreen.width = self.width;
             self.onscreen.height = self.height;
-            self.primary = self.onscreen.getContext('2d');
+            self.onscreen.context = self.onscreen.getContext('2d');
         };
 
-        self.setTarget = function (personality) {
+        self.setTarget = function (targetPersonality) {
             reset();
 
             var deviation = self.segmentAngle * 0.4;
             var round = Math.floor(Math.random() + 0.5);
 
-            for (var i = 0; i < self.personalities.length; i++) {
-                if (personality.name === self.personalities[i].name) {
-                    var angle = i * self.segmentAngle + (round * Math.PI);
+            self.personalities.forEach(function (personality, index) {
+                if (targetPersonality.name === personality.name) {
+                    var angle = index * self.segmentAngle + (round * Math.PI);
                     var min = angle + deviation;
                     var max = angle - deviation;
                     var deviated = Math.random() * (max - min) + min;
@@ -258,7 +244,7 @@
 
                     return;
                 }
-            }
+            });
         };
 
         self.draw = function (context, rotation, canvas) {
@@ -283,7 +269,7 @@
                 if (self.rotation < self.minRotation) {
                     self.rotation += Math.min(rotation, self.minRotation - self.rotation);
 
-                    self.draw(self.primary, self.rotation, self.offscreen);
+                    self.draw(self.onscreen.context, self.rotation, self.offscreen);
 
                     window.requestAnimationFrame(_animate);
                 } else {
