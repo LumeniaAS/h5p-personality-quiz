@@ -220,8 +220,8 @@ var H5P = H5P || {};
             }
         }
 
-        self.attach = function (id) {
-            self.onscreen = document.querySelector('#' + id);
+        self.attach = function (canvasElement) {
+            self.onscreen = canvasElement;
             self.onscreen.width = self.width;
             self.onscreen.height = self.height;
             self.onscreen.context = self.onscreen.getContext('2d');

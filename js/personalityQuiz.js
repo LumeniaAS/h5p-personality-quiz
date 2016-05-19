@@ -4,6 +4,7 @@ H5P.PersonalityQuiz = (function ($) {
     function PersonalityQuiz (params, id) {
         var self = this;
 
+        self.classPrefix = 'h5p-personality-quiz-';
         self.resultAnimation = params.resultScreen.animation;
         self.resultTitle = params.resultScreen.displayTitle;
         self.resultDescription = params.resultScreen.displayDescription;
@@ -17,7 +18,7 @@ H5P.PersonalityQuiz = (function ($) {
         self.loadingImages = [];
 
         var canvas = {
-            id: 'wheel',
+            id: classes('wheel'),
             width: 300,
             height: 300,
         };
@@ -29,12 +30,16 @@ H5P.PersonalityQuiz = (function ($) {
             return H5P.getPath(path, id);
         }
 
+        function prefix (className) {
+            return self.classPrefix + className;
+        }
+
         function classes () {
             var args = Array.prototype.slice.call(arguments);
             var classNames = 'h5p-personality-quiz';
 
             args.forEach(function (argument) {
-                classNames += ' ' + argument;
+                classNames += ' ' + prefix(argument);
             });
 
             return classNames;
@@ -63,10 +68,10 @@ H5P.PersonalityQuiz = (function ($) {
         function addButtonListener ($element, listener) {
             if (animation) {
                 $element.click(function () {
-                    $(this).addClass('button-animate');
+                    $(this).addClass(prefix('button-animate'));
                 });
                 $element.on('animationend', function () {
-                    $(this).removeClass('button-animate');
+                    $(this).removeClass(prefix('button-animate'));
                     listener();
                 });
             } else {
@@ -122,7 +127,7 @@ H5P.PersonalityQuiz = (function ($) {
             $container.append($bar, $slides);
 
             quiz.$progressbar = $bar;
-            quiz.$progressText = $bar.children('.progress-text');
+            quiz.$progressText = $bar.children(classes('progress-text'));
             quiz.$wrapper = $container;
             quiz.$slides = $slides.children();
             quiz.$result = $result;
@@ -335,7 +340,7 @@ H5P.PersonalityQuiz = (function ($) {
 
         self.setResult = function (personality) {
             if (self.$canvas) {
-                self.wheel.attach(canvas.id);
+                self.wheel.attach(self.$canvas[0]);
                 self.wheel.setTarget(personality);
                 self.wheel.animate();
             }
@@ -344,7 +349,7 @@ H5P.PersonalityQuiz = (function ($) {
                 var path = _getPath(personality.image.file.path);
 
                 self.$result.css('background-image', 'url(' + path + ')');
-                self.$result.addClass('background');
+                self.$result.addClass(prefix('background'));
             }
 
             var showResult = self.resultTitle || self.resultDescription;
@@ -411,27 +416,28 @@ H5P.PersonalityQuiz = (function ($) {
 
         self.answerListener = function (event) {
             var $target = $(event.target);
-            var container = $target.parent().hasClass('answer-container');
+            var has_container = $target.parent().hasClass(prefix('answer-container'));
+            var animationClass = prefix('button-animate');
 
-            if (container) {
+            if (has_container) {
                 $target = $target.parent();
             }
 
-            var $button = container ? $target.children('.answer-button') : $target;
+            var $button = has_container ? $target.children('.' + prefix('answer-button')) : $target;
             var personalities = $target.attr('data-personality');
 
             if (personalities) {
                 if (animation) {
-                    $button.addClass('button-animate');
+                    $button.addClass(animationClass);
                     $button.on('animationend', function () {
-                        $(this).removeClass('button-animate');
+                        $(this).removeClass(animationClass);
                         self.trigger('personality-quiz-answer', personalities);
                     });
                 } else {
                     self.trigger('personality-quiz-answer', personalities);
                 }
 
-                $target.parent('.answers').off('click');
+                $target.parent(prefix('answers')).off('click');
             }
         };
 
@@ -474,8 +480,9 @@ H5P.PersonalityQuiz = (function ($) {
 
         self.on('wheel-animation-end', function () {
             setTimeout(function () {
-                self.$canvas.addClass('fade-out');
+                self.$canvas.addClass(prefix('fade-out'));
             }, 500);
+
             self.$canvas.on('animationend', self.next);
         });
 

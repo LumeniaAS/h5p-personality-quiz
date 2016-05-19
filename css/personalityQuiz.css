@@ -15,10 +15,6 @@
     to { opacity: 0; }
 }
 
-* {
-    -webkit-tap-highlight-color: transparent;
-}
-
 .h5p-personality-quiz {
     font-weight: 400;
     font-family: "Noto Sans", sans-serif;
@@ -26,9 +22,10 @@
     border: none;
     text-transform: none;
     word-break: keep-all;
+    -webkit-tap-highlight-color: transparent;
 }
 
-.h5p-personality-quiz.container {
+.h5p-personality-quiz.h5p-personality-quiz-container {
     position: relative;
     height: 100%;
     overflow: hidden;
@@ -52,7 +49,7 @@ button.h5p-personality-quiz {
     letter-spacing: 0px;
 }
 
-.h5p-personality-quiz .button {
+.h5p-personality-quiz .h5p-personality-quiz-button {
     background: rgb(233, 239, 247);
     color: rgb(60, 62, 64);
     border-radius: 5px;
@@ -66,61 +63,61 @@ button.h5p-personality-quiz {
     white-space: normal;
 }
 
-.h5p-personality-quiz .button:active {
+.h5p-personality-quiz .h5p-personality-quiz-button:active {
     border: unset;
     transform: unset;
     box-shadow: unset;
 }
 
-.h5p-personality-quiz .button:focus {
+.h5p-personality-quiz .h5p-personality-quiz-button:focus {
     outline: none;
     box-shadow: unset;
     border: unset;
 }
 
-.h5p-personality-quiz .background {
+.h5p-personality-quiz .h5p-personality-quiz-background {
     background-size: cover;
     background-position: 50% 50%;
     background-repeat: no-repeat;
 }
 
-.h5p-personality-quiz .fade-in {
+.h5p-personality-quiz .h5p-personality-quiz-fade-in {
     animation-name: fade-in;
     animation-duration: 1s;
 }
 
-.h5p-personality-quiz .fade-out {
+.h5p-personality-quiz .h5p-personality-quiz-fade-out {
     animation-name: fade-out;
     animation-duration: 1s;
 }
 
-.h5p-personality-quiz .button-animate {
+.h5p-personality-quiz .h5p-personality-quiz-button-animate {
     animation-duration: 0.9s;
     animation-name: button-fill;
     animation-fill-mode: forwards;
 }
 
-.h5p-personality-quiz .slides {
+.h5p-personality-quiz .h5p-personality-quiz-slides {
     display: inline-block;
     height: 100%;
     width: 100%;
 }
 
-.h5p-personality-quiz .slide {
+.h5p-personality-quiz .h5p-personality-quiz-slide {
     height: 100%;
 }
 
-.h5p-personality-quiz .title-card {
+.h5p-personality-quiz .h5p-personality-quiz-title-card {
     text-align: center;
     min-height: 320px;
 }
 
-.h5p-personality-quiz .title-card-image {
+.h5p-personality-quiz .h5p-personality-quiz-title-card-image {
     max-width: 100%;
     height: auto;
 }
 
-.h5p-personality-quiz .title {
+.h5p-personality-quiz .h5p-personality-quiz-title {
     position: absolute;
     top: 0;
     width: 100%;
@@ -132,19 +129,19 @@ button.h5p-personality-quiz {
     font-size: 2.4em;
 }
 
-.h5p-personality-quiz .start-button-wrapper {
+.h5p-personality-quiz .h5p-personality-quiz-start-button-wrapper {
     position: absolute;
     top: 75%;
     width: 100%;
     text-align: center;
 }
 
-.h5p-personality-quiz .quiz {
+.h5p-personality-quiz .h5p-personality-quiz-quiz {
     height: 100%;
     padding-top: 2.8em;
 }
 
-.h5p-personality-quiz.progressbar {
+.h5p-personality-quiz.h5p-personality-quiz-progressbar {
     width: calc(100% + 2px);
     background: rgb(60, 62, 64);
     color: white;
@@ -154,33 +151,33 @@ button.h5p-personality-quiz {
     left: -1px;
 }
 
-.h5p-personality-quiz .progress-text {
+.h5p-personality-quiz .h5p-personality-quiz-progress-text {
     color: white;
     margin-left: 1em;
     font-size: 1.2em;
 }
 
-.h5p-personality-quiz .question {
+.h5p-personality-quiz .h5p-personality-quiz-question {
     font-size: 1.8em;
     text-align: center;
     margin-top: 0.5em;
     width: 100%;
 }
 
-.h5p-personality-quiz.question-text {
+.h5p-personality-quiz.h5p-personality-quiz-question-text {
     margin: 0.5em 0;
 }
 
-.h5p-personality-quiz .question-image {
+.h5p-personality-quiz .h5p-personality-quiz-question-image {
     max-height: 12em;
     max-width: 20em;
 }
 
-.h5p-personality-quiz .answers-wrapper {
+.h5p-personality-quiz .h5p-personality-quiz-answers-wrapper {
     text-align: center;
 }
 
-.h5p-personality-quiz .answers {
+.h5p-personality-quiz .h5p-personality-quiz-answers {
     display: inline-block;
     margin: 1em auto;
     list-style: none;
@@ -190,14 +187,14 @@ button.h5p-personality-quiz {
     padding: 0;
 }
 
-.h5p-personality-quiz .answer {
+.h5p-personality-quiz .h5p-personality-quiz-answer {
     margin: 0.5em auto;
     width: 80%;
     cursor: pointer;
     font-size: 1.5em;
 }
 
-.h5p-personality-quiz .answer-container {
+.h5p-personality-quiz .h5p-personality-quiz-answer-container {
     width: calc(50% - 1em);
     display: inline-block;
     float: left;
@@ -207,7 +204,7 @@ button.h5p-personality-quiz {
 
 
 @media (min-width: 600px) {
-    .h5p-personality-quiz .answer-container {
+    .h5p-personality-quiz .h5p-personality-quiz-answer-container {
         width: calc(33% - 1em);
         display: inline-block;
         float: left;
@@ -216,7 +213,7 @@ button.h5p-personality-quiz {
     }
 }
 
-.h5p-personality-quiz .answer-image {
+.h5p-personality-quiz .h5p-personality-quiz-answer-image {
     border-radius: 5px 5px 0 0;
     background-size: cover;
     background-position: center;
@@ -224,7 +221,7 @@ button.h5p-personality-quiz {
     min-height: 10em;
 }
 
-.h5p-personality-quiz .answer-button {
+.h5p-personality-quiz .h5p-personality-quiz-answer-button {
     border-radius: 0 0 5px 5px;
     padding: 0.5em 0;
     margin: 0;
@@ -232,12 +229,12 @@ button.h5p-personality-quiz {
     box-sizing: border-box;
 }
 
-.h5p-personality-quiz .result-image {
+.h5p-personality-quiz .h5p-personality-quiz-result-image {
     width: 100%;
     height: auto;
 }
 
-.h5p-personality-quiz .personality-wrapper {
+.h5p-personality-quiz .h5p-personality-quiz-personality-wrapper {
     position: relative;
     top: 50%;
     transform: translateY(-50%);
@@ -245,7 +242,7 @@ button.h5p-personality-quiz {
     padding: 1em;
 }
 
-.h5p-personality-quiz .personality {
+.h5p-personality-quiz .h5p-personality-quiz-personality {
     color: rgb(60, 62, 64);
     width: 80%;
     padding: 1em;
@@ -254,7 +251,7 @@ button.h5p-personality-quiz {
     border-radius: 5px;
 }
 
-.h5p-personality-quiz .personality h2 {
+.h5p-personality-quiz .h5p-personality-quiz-personality h2 {
     margin: 0;
     padding: 0.5em;
     color: rgb(60, 62, 64);
@@ -262,7 +259,7 @@ button.h5p-personality-quiz {
     text-align: left;
 }
 
-.h5p-personality-quiz .personality p {
+.h5p-personality-quiz .h5p-personality-quiz-personality p {
     font-size: 1.5em;
     margin: 0.5em;
     white-space: normal;
@@ -270,25 +267,25 @@ button.h5p-personality-quiz {
     text-align: left;
 }
 
-.h5p-personality-quiz .retake-button {
+.h5p-personality-quiz .h5p-personality-quiz-retake-button {
     position: absolute;
     bottom: 1em;
     left: 1em;
 }
 
-.h5p-personality-quiz .wheel-container {
+.h5p-personality-quiz .h5p-personality-quiz-wheel-container {
     width: 100%;
     height: 100%;
     background-color: white;
 }
 
-.h5p-personality-quiz #wheel {
+.h5p-personality-quiz .h5p-personality-quiz-wheel {
     position: relative;
     top: 50%;
     transform: translateY(-50%);
 }
 
-.h5p-personality-quiz .wheel-container {
+.h5p-personality-quiz .h5p-personality-quiz-wheel-container {
     text-align: center;
     z-index: 150;
 }
