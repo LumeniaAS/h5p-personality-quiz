@@ -1,306 +1,306 @@
 @import url(https://fonts.googleapis.com/css?family=Noto+Sans:400,700);
 
 @keyframes button-fill {
-    from { background-position: 100%; color: rgb(60, 62, 64); }
-    to { background-position: 0%; color: rgb(233, 239, 247); }
+  from { background-position: 100%; color: rgb(60, 62, 64); }
+  to { background-position: 0%; color: rgb(233, 239, 247); }
 }
 
 @keyframes fade-in {
-    from { opacity: 0; }
-    to { opacity: 1; }
+  from { opacity: 0; }
+  to { opacity: 1; }
 }
 
 @keyframes fade-out {
-    from { opacity: 1; }
-    to { opacity: 0; }
+  from { opacity: 1; }
+  to { opacity: 0; }
 }
 
 .h5p-personality-quiz {
-    font-weight: 400;
-    font-family: "Noto Sans", sans-serif;
-    color: rgb(60, 62, 64);
-    border: none;
-    margin: 0;
-    padding: 0;
-    text-transform: none;
-    word-break: keep-all;
-    -webkit-tap-highlight-color: transparent;
+  font-weight: 400;
+  font-family: "Noto Sans", sans-serif;
+  color: rgb(60, 62, 64);
+  border: none;
+  margin: 0;
+  padding: 0;
+  text-transform: none;
+  word-break: keep-all;
+  -webkit-tap-highlight-color: transparent;
 }
 
 .h5p-personality-quiz.h5p-personality-quiz-container {
-    position: relative;
-    height: 100%;
-    overflow: hidden;
-    font-size: 62.5%;
+  position: relative;
+  height: 100%;
+  overflow: hidden;
+  font-size: 62.5%;
 }
 
 p.h5p-personality-quiz {
-    margin: 0;
-    color: rgb(60, 62, 64);
-    font-size: 1.5em;
-    line-height: 1.4em;
-    white-space: normal;
+  margin: 0;
+  color: rgb(60, 62, 64);
+  font-size: 1.5em;
+  line-height: 1.4em;
+  white-space: normal;
 }
 
 h2.h5p-personality-quiz {
-    margin: 0;
+  margin: 0;
 }
 
 button.h5p-personality-quiz {
-    font-size: 2em;
-    letter-spacing: 0px;
+  font-size: 2em;
+  letter-spacing: 0px;
 }
 
 
 .h5p-personality-quiz .h5p-personality-quiz-button {
-    background: rgb(233, 239, 247);
-    color: rgb(60, 62, 64);
-    border-radius: 5px;
-    padding: 0.4em 1.5em;
-    cursor: pointer;
-    height: auto;
-    border: none;
-    line-height: 1.5em;
-    font-size: 1.5em;
-    box-shadow: unset;
-    white-space: normal;
+  background: rgb(233, 239, 247);
+  color: rgb(60, 62, 64);
+  border-radius: 5px;
+  padding: 0.4em 1.5em;
+  cursor: pointer;
+  height: auto;
+  border: none;
+  line-height: 1.5em;
+  font-size: 1.5em;
+  box-shadow: unset;
+  white-space: normal;
 }
 
 .h5p-personality-quiz .h5p-personality-quiz-button:active {
-    border: unset;
-    transform: unset;
-    box-shadow: unset;
+  border: unset;
+  transform: unset;
+  box-shadow: unset;
 }
 
 .h5p-personality-quiz .h5p-personality-quiz-button:focus {
-    outline: none;
-    box-shadow: unset;
-    border: unset;
+  outline: none;
+  box-shadow: unset;
+  border: unset;
 }
 
 .h5p-personality-quiz .h5p-personality-quiz-background {
-    background-size: cover;
-    background-position: 50% 50%;
-    background-repeat: no-repeat;
+  background-size: cover;
+  background-position: 50% 50%;
+  background-repeat: no-repeat;
 }
 
 .h5p-personality-quiz .h5p-personality-quiz-fade-in {
-    animation-name: fade-in;
-    animation-duration: 1s;
+  animation-name: fade-in;
+  animation-duration: 1s;
 }
 
 .h5p-personality-quiz .h5p-personality-quiz-fade-out {
-    animation-name: fade-out;
-    animation-duration: 1s;
+  animation-name: fade-out;
+  animation-duration: 1s;
 }
 
 .h5p-personality-quiz .h5p-personality-quiz-button-animate {
-    animation-duration: 0.9s;
-    animation-name: button-fill;
-    animation-fill-mode: forwards;
+  animation-duration: 0.9s;
+  animation-name: button-fill;
+  animation-fill-mode: forwards;
 }
 
 .h5p-personality-quiz .h5p-personality-quiz-slides {
-    display: inline-block;
-    height: 100%;
-    width: 100%;
+  display: inline-block;
+  height: 100%;
+  width: 100%;
 }
 
 .h5p-personality-quiz .h5p-personality-quiz-slide {
-    height: 100%;
-    width: 100%;
-    padding: 0 0.5em;
+  height: 100%;
+  width: 100%;
 }
 
 .h5p-personality-quiz .h5p-personality-quiz-title-card {
-    text-align: center;
-    min-height: 320px;
+  text-align: center;
+  min-height: 320px;
 }
 
 .h5p-personality-quiz .h5p-personality-quiz-title-card-image {
-    max-width: 100%;
-    height: auto;
+  max-width: 100%;
+  height: auto;
 }
 
 .h5p-personality-quiz .h5p-personality-quiz-title {
-    position: absolute;
-    top: 0;
-    width: 100%;
-    color: rgb(60, 62, 64);
-    background-color: rgba(233, 239, 247, 0.8);
-    padding: 1em 0;
-    margin: 0;
-    text-align: center;
-    font-size: 2.4em;
+  position: absolute;
+  top: 0;
+  width: 100%;
+  color: rgb(60, 62, 64);
+  background-color: rgba(233, 239, 247, 0.8);
+  padding: 1em 0;
+  margin: 0;
+  text-align: center;
+  font-size: 2.4em;
 }
 
 .h5p-personality-quiz .h5p-personality-quiz-start-button-wrapper {
-    position: absolute;
-    top: 75%;
-    width: 100%;
-    text-align: center;
+  position: absolute;
+  top: 75%;
+  width: 100%;
+  text-align: center;
 }
 
 .h5p-personality-quiz .h5p-personality-quiz-question {
-    height: 100%;
-    padding-top: 2.8em;
+  height: 100%;
+  padding-top: 2.8em;
+  padding: 2.8em 0.5em 0 0.5em;
 }
 
 .h5p-personality-quiz.h5p-personality-quiz-progressbar {
-    width: calc(100% + 2px);
-    background: rgb(60, 62, 64);
-    color: white;
-    padding: 0.5em 0;
-    position: absolute;
-    top: 0;
-    left: -1px;
+  width: calc(100% + 2px);
+  background: rgb(60, 62, 64);
+  color: white;
+  padding: 0.5em 0;
+  position: absolute;
+  top: 0;
+  left: -1px;
 }
 
 .h5p-personality-quiz .h5p-personality-quiz-progress-text {
-    color: white;
-    margin-left: 1em;
-    font-size: 1.2em;
+  color: white;
+  margin-left: 1em;
+  font-size: 1.2em;
 }
 
 .h5p-personality-quiz .h5p-personality-quiz-question-wrapper {
-    font-size: 1.8em;
-    text-align: center;
-    margin-top: 0.5em;
-    width: 100%;
+  font-size: 1.8em;
+  text-align: center;
+  margin-top: 0.5em;
+  width: 100%;
 }
 
 .h5p-personality-quiz.h5p-personality-quiz-question-text {
-    margin: 0.5em 0;
-    text-align: center;
-    font-size: 1.8em;
+  margin: 0.5em 0;
+  text-align: center;
+  font-size: 1.8em;
 }
 
 .h5p-personality-quiz .h5p-personality-quiz-question-image {
-    max-height: 30%;
-    max-width: 80%;
-    margin: 0.5em auto;
-    display: block;
+  max-height: 30%;
+  max-width: 80%;
+  margin: 0.5em auto;
+  display: block;
 }
 
 .h5p-personality-quiz .h5p-personality-quiz-answers-wrapper {
-    text-align: center;
+  text-align: center;
 }
 
 .h5p-personality-quiz .h5p-personality-quiz-answers {
-    display: inline-block;
-    margin: 1em auto;
-    list-style: none;
-    width: 95%;
-    text-align: center;
-    height: 100%;
-    padding: 0;
+  display: inline-block;
+  margin: 1em auto;
+  list-style: none;
+  width: 95%;
+  text-align: center;
+  height: 100%;
+  padding: 0;
 }
 
 .h5p-personality-quiz .h5p-personality-quiz-answer {
-    margin: 0.5em auto;
-    width: 80%;
-    cursor: pointer;
-    font-size: 1.2em;
+  margin: 0.5em auto;
+  width: 80%;
+  cursor: pointer;
+  font-size: 1.2em;
 }
 
 .h5p-personality-quiz .h5p-personality-quiz-row {
-    display: inline-block;
-    width: 100%;
+  display: inline-block;
+  width: 100%;
 }
 
 .h5p-personality-quiz .h5p-personality-quiz-column {
-    display: inline-block;
-    float: left;
-    padding: 0.5em;
-    cursor: pointer;
-    box-sizing: border-box;
+  display: inline-block;
+  float: left;
+  padding: 0.5em;
+  cursor: pointer;
+  box-sizing: border-box;
 }
 
 .h5p-personality-quiz .h5p-personality-quiz-columns-2 {
-    width: 50%;
+  width: 50%;
 }
 
 .h5p-personality-quiz .h5p-personality-quiz-columns-3 {
-    width: 33.33%;
+  width: 33.33%;
 }
 
 .h5p-personality-quiz .h5p-personality-quiz-image-answers {
-    list-style: none;
+  list-style: none;
 }
 
 .h5p-personality-quiz .h5p-personality-quiz-image-answer-image {
-    border-radius: 5px 5px 0 0;
-    background-size: cover;
-    background-position: center;
-    background-repeat: no-repeat;
-    min-height: 10em;
+  border-radius: 5px 5px 0 0;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  min-height: 10em;
 }
 
 .h5p-personality-quiz .h5p-personality-quiz-image-answer-button {
-    border-radius: 0 0 5px 5px;
-    padding: 0.5em 0;
-    margin: 0;
-    width: 100%;
-    box-sizing: border-box;
-    font-size: 1.2em;
+  border-radius: 0 0 5px 5px;
+  padding: 0.5em 0;
+  margin: 0;
+  width: 100%;
+  box-sizing: border-box;
+  font-size: 1.2em;
 }
 
 .h5p-personality-quiz .h5p-personality-quiz-personality-wrapper {
-    text-align: center;
-    padding: 1em;
-    height: 100%;
+  text-align: center;
+  padding: 1em;
+  height: 100%;
 }
 
 .h5p-personality-quiz .h5p-personality-quiz-personality {
-    color: rgb(60, 62, 64);
-    width: 80%;
-    padding: 1em;
-    background-color: rgba(233, 239, 247, 0.8);
-    margin: 1em auto;
-    border-radius: 5px;
+  color: rgb(60, 62, 64);
+  width: 80%;
+  padding: 1em;
+  background-color: rgba(233, 239, 247, 0.8);
+  margin: 1em auto;
+  border-radius: 5px;
 }
 
 .h5p-personality-quiz .h5p-personality-quiz-center-personality {
-    position: relative;
-    top: 50%;
-    transform: translateY(-50%);
+  position: relative;
+  top: 50%;
+  transform: translateY(-50%);
 }
 
 .h5p-personality-quiz .h5p-personality-quiz-personality h2 {
-    margin: 0;
-    padding: 0.5em;
-    color: rgb(60, 62, 64);
-    font-size: 2em;
-    text-align: left;
+  margin: 0;
+  padding: 0.5em;
+  color: rgb(60, 62, 64);
+  font-size: 2em;
+  text-align: left;
 }
 
 .h5p-personality-quiz .h5p-personality-quiz-personality p {
-    font-size: 1.5em;
-    margin: 0.5em;
-    white-space: normal;
-    line-height: 1.4em;
-    text-align: left;
+  font-size: 1.5em;
+  margin: 0.5em;
+  white-space: normal;
+  line-height: 1.4em;
+  text-align: left;
 }
 
 .h5p-personality-quiz .h5p-personality-quiz-retake-button {
-    position: absolute;
-    bottom: 1em;
-    left: 1em;
+  position: absolute;
+  bottom: 1em;
+  left: 1em;
 }
 
 .h5p-personality-quiz .h5p-personality-quiz-wheel-container {
-    width: 100%;
-    height: 100%;
-    background-color: white;
+  width: 100%;
+  height: 100%;
+  background-color: white;
 }
 
 .h5p-personality-quiz .h5p-personality-quiz-wheel {
-    position: relative;
-    top: 50%;
-    transform: translateY(-50%);
+  position: relative;
+  top: 50%;
+  transform: translateY(-50%);
 }
 
 .h5p-personality-quiz .h5p-personality-quiz-wheel-container {
-    text-align: center;
-    z-index: 150;
+  text-align: center;
+  z-index: 150;
 }
