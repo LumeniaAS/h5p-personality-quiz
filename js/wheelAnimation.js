@@ -1,6 +1,16 @@
 var H5P = H5P || {};
 
 (function ($, PersonalityQuiz) {
+    /**
+        A wheel of fortune animation.
+
+        @param {Object} quiz
+        @param {Object} personalities
+        @param {number} width
+        @param {number} height
+        @param {PathFunction} _getPath
+        @constructor
+    */
     PersonalityQuiz.WheelAnimation = function (quiz, personalities, width, height, _getPath) {
         var self = this;
 
@@ -23,7 +33,7 @@ var H5P = H5P || {};
         self.nubRadius = self.width * 0.06;
 
         self.segmentAngle = (Math.PI * 2) / (personalities.length * 2);
-        self.minRotation = 6 * (Math.PI * 2) + ((3 * Math.PI) / 2) - (self.segmentAngle / 2);
+        self.targetRotation = 6 * (Math.PI * 2) + ((3 * Math.PI) / 2) - (self.segmentAngle / 2);
         self.rotation = 0;
         self.rotationSpeed = Math.PI / 32;
 
@@ -46,6 +56,8 @@ var H5P = H5P || {};
         if (self.personalities[0].image.file) {
             load();
         } else {
+
+            // NOTE (Emil): If there aren't any images we use a slightly different colors.
             self.colors = {
                 even: 'rgb(233, 239, 247)',
                 odd:  'rgb(203, 209, 217)',
@@ -58,16 +70,34 @@ var H5P = H5P || {};
             drawOffscreen(self.offscreen.context, self.personalities);
         }
 
+        /**
+            Clamp a value between low and high
+
+            @param {number} value
+            @param {number} low
+            @param {number} high
+            @return {number}
+        */
         function clamp (value, low, high) {
             return Math.min(Math.max(low, value), high);
         }
 
-
+        /**
+            Zero out the current rotation and set the initial targetRotation.
+        */
         function reset () {
             self.rotation = 0;
-            self.minRotation = 6 * (Math.PI * 2) + ((3 * Math.PI) / 2) - (self.segmentAngle / 2);
+            self.targetRotation = 6 * (Math.PI * 2) + ((3 * Math.PI) / 2) - (self.segmentAngle / 2);
         }
 
+        /**
+            Returns the image pattern associated with the personality, if there is one,
+            or it returns the background color for the segment.
+
+            @param {Object} personality
+            @param {number} index
+            @return {Object|string}
+        */
         function getPattern (personality, index) {
             if (personality.image.pattern) {
                 return personality.image.pattern;
@@ -80,6 +110,9 @@ var H5P = H5P || {};
             }
         }
 
+        /**
+            Load personality images and when all images are loaded draw the wheel.
+        */
         function load () {
             self.loadingImages = [];
 
@@ -103,6 +136,16 @@ var H5P = H5P || {};
             });
         }
 
+        /**
+            Draw a single segment of the wheel. There are two segments per personality.
+
+            @param {CanvasRenderingContext2D} context
+            @param {Object} center
+            @param {number} radius
+            @param {number} fromAngle
+            @param {number} toAngle
+            @param {string|CanvasGradient|CanvasPattern} fillStyle
+        */
         function drawSegment (context, center, radius, fromAngle, toAngle, fillStyle) {
             context.beginPath();
 
@@ -112,12 +155,21 @@ var H5P = H5P || {};
             context.arc(center.x, center.y, radius, fromAngle, toAngle, false);
             context.lineTo(center.x, center.y);
 
-            context.fill();
-            context.stroke();
+            context.fill(); // Fill the segment with the background image.
+            context.stroke(); // Draw the outline of the segment.
 
             context.closePath();
         }
 
+        /**
+            Draw the personality name if there is not image associated with the personality.
+
+            @param {CanvasRenderingContext2D} context
+            @param {string} text
+            @param {number} x
+            @param {number} y
+            @param {number} maxWidth
+        */
         function drawText (context, text, x, y, maxWidth) {
             context.fillStyle = self.colors.text;
             context.font = '24px Arial';
@@ -125,6 +177,13 @@ var H5P = H5P || {};
             context.fillText(text, x, y, maxWidth);
         }
 
+        /**
+            Draw the prerendered wheel, which is stored in the offscreen canvas.
+
+            @param {CanvasRenderingContext2D} context
+            @param {number} rotation
+            @param {HTMLElement} canvas
+        */
         function drawWheel (context, rotation, canvas) {
             context.save();
 
@@ -143,6 +202,14 @@ var H5P = H5P || {};
             context.restore();
         }
 
+        /**
+            Draw the center arrow which will point to the result personality.
+
+            @param {CanvasRenderingContext2D} context
+            @param {Object} center
+            @param {number} radius
+            @param {string} color
+        */
         function drawNub (context, center, radius, color) {
             context.fillStyle = color;
 
@@ -158,6 +225,12 @@ var H5P = H5P || {};
             context.closePath();
         }
 
+        /**
+            Draw the wheel in the offscreen canvas and save it for later.
+
+            @param {CanvasRenderingContext2D} context
+            @param {Object[]} personalities - a list of personalities from H5P.PersonalityQuiz
+        */
         function drawOffscreen (context, personalities) {
             context.textBaseline = 'middle';
             context.strokeStyle = self.colors.frame;
@@ -165,6 +238,8 @@ var H5P = H5P || {};
             var center = { x: self.offscreen.width / 2, y: self.offscreen.height / 2 };
             var radius = self.offscreen.width / 2 - 2;
 
+            // NOTE (Emil): We draw two segments for each personality,
+            // this way the number of segments is always even.
             var length = personalities.length * 2;
             var angle = (Math.PI * 2) / length;
             var halfAngle = angle / 2;
@@ -184,6 +259,7 @@ var H5P = H5P || {};
                 // NOTE (Emil): Assumes that the center of the image is the most interesting.
                 context.save();
 
+                // NOTE (Emil): Center the circle segment over the center of the background image.
                 context.translate(center.x, center.y);
                 context.rotate(open + halfAngle - (Math.PI / 2));
                 context.translate(-offset.x, -offset.y);
@@ -220,6 +296,11 @@ var H5P = H5P || {};
             }
         }
 
+        /**
+            Attach the wheel animation to the provided canvas element.
+
+            @param {HTMLElement} canvasElement
+        */
         self.attach = function (canvasElement) {
             self.onscreen = canvasElement;
             self.onscreen.width = self.width;
@@ -227,10 +308,18 @@ var H5P = H5P || {};
             self.onscreen.context = self.onscreen.getContext('2d');
         };
 
+        /**
+            Set the target personality and calculates the target rotation.
+
+            @param {Object} targetPersonality
+        */
         self.setTarget = function (targetPersonality) {
             reset();
 
             var deviation = self.segmentAngle * 0.4;
+
+            // NOTE (Emil): Randomly choose one of the two segments associated
+            // with the personality.
             var round = Math.floor(Math.random() + 0.5);
 
             self.personalities.forEach(function (personality, index) {
@@ -240,13 +329,20 @@ var H5P = H5P || {};
                     var max = angle - deviation;
                     var deviated = Math.random() * (max - min) + min;
 
-                    self.minRotation = self.minRotation - deviated;
+                    self.targetRotation = self.targetRotation - deviated;
 
                     return;
                 }
             });
         };
 
+        /**
+            Draw the wheel of fortune
+
+            @param {CanvasRenderingContext2D} context
+            @param {number} rotation
+            @param {HTMLElement} canvas
+        */
         self.draw = function (context, rotation, canvas) {
             context.clearRect(0, 0, self.onscreen.width, self.onscreen.height);
 
@@ -254,6 +350,10 @@ var H5P = H5P || {};
             drawNub(context, self.center, self.nubRadius, self.colors.nub);
         };
 
+        /**
+            The main animation loop. Starts the callback loop to requestAnimationFrame.
+            A call to 'setTarget' is required before calling this function.
+        */
         self.animate = function () {
             var end, start;
             self.rotation = 0;
@@ -263,11 +363,12 @@ var H5P = H5P || {};
                 start = timestamp;
 
                 var dt = (start - end) / 1000;
-                var scale = 1 - (self.rotation / self.minRotation);
+                var scale = 1 - (self.rotation / self.targetRotation);
                 var rotation = Math.max(scale * dt * self.rotationSpeed, 0.01);
 
-                if (self.rotation < self.minRotation) {
-                    self.rotation += Math.min(rotation, self.minRotation - self.rotation);
+                if (self.rotation < self.targetRotation) {
+                    // NOTE (Emil): Always move atleast a little until the targetRotation is achieved.
+                    self.rotation += Math.min(rotation, self.targetRotation - self.rotation);
 
                     self.draw(self.onscreen.context, self.rotation, self.offscreen);
 

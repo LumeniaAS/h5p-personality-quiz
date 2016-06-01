@@ -43,6 +43,13 @@
                         "description": "Alternative text if the browser is unable to load the image."
                     }
                 ]
+            },
+            {
+                "name": "skip",
+                "label": "Skip",
+                "type": "boolean",
+                "description": "Select if you want the quiz to start on the first question instead of the title screen.",
+                "default": false
             }
         ]
     },
@@ -55,6 +62,7 @@
                 "name": "animation",
                 "type": "select",
                 "label": "Animation",
+                "description": "The Wheel of Fortune animation will only use the images associated with personalities if ALL personalities has an image associated with them.",
                 "default": "none",
                 "options": [
                     {
@@ -82,6 +90,23 @@
                 "type": "boolean",
                 "label": "Display description?",
                 "default": true
+            },
+            {
+                "name": "imagePosition",
+                "type": "select",
+                "label": "Personality Image Position",
+                "description": "Choose how to display the image, if there is any, of the result personality. Background will fill the entire H5P container and center the image. Inline will put the image as an image element between the result personality name and description.",
+                "default": "background",
+                "options": [
+                    {
+                        "value": "background",
+                        "label": "Background"
+                    },
+                    {
+                        "value": "inline",
+                        "label": "Inline"
+                    }
+                ]
             }
         ]
     },
@@ -101,15 +126,14 @@
                     "name": "name",
                     "type": "text",
                     "label": "Personality name",
-                    "description": "The display name for the personality. Used to connect answers with personalities."
+                    "description": "The personality name will be used to associate answers with their respective personalities."
                 },
                 {
                     "name": "description",
                     "type": "text",
                     "label": "Description",
                     "maxLength": 450,
-                    "widget": "textarea",
-                    "description": "A description of the personality to be displayed at the end of the quiz."
+                    "widget": "textarea"
                 },
                 {
                     "name": "image",
@@ -153,7 +177,7 @@
                     "name": "image",
                     "type": "group",
                     "label": "Optional: Image",
-                    "description": "Image displayed above the question text.",
+                    "description": "Image displayed at the top of the screen above or below the question text.",
                     "optional": true,
                     "fields": [
                         {
@@ -189,12 +213,13 @@
                             {
                                 "name": "personality",
                                 "type": "text",
-                                "label": "Personality",
-                                "description": "A comma separated list of all the Personality names associated with this answer."
+                                "label": "Personalities",
+                                "description": "A comma separated list of personality names associated with this answer."
                             },
                             {
                                 "name": "image",
                                 "type": "group",
+                                "description": "Images associated with answers will not show up unless all answers associated with a question has an image attached.",
                                 "label": "Optional: Image",
                                 "optional": true,
                                 "fields": [
