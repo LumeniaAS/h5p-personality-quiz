@@ -154,10 +154,10 @@ H5P.PersonalityQuiz = (function ($) {
       Calculates the height of the image on the result screen, if the
       quiz uses the 'inline' result image option.
 
-      @parma {jQuery} $container
-      @parma {jQuery} $slide
-      @parma {jQuery} $title
-      @parma {jQuery} $description
+      @param {jQuery} $container
+      @param {jQuery} $slide
+      @param {jQuery} $title
+      @param {jQuery} $description
       @return {number} The maximum allowable height of the result image
     */
     function calculateResultImageHeight($container, $slide, $title, $description) {

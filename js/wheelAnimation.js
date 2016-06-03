@@ -261,10 +261,12 @@ var H5P = H5P || {};
           offset.y = (personality.image.file.height - radius) / 2;
         }
 
-        // NOTE (Emil): Assumes that the center of the image is the most interesting.
         context.save();
 
-        // NOTE (Emil): Center the circle segment over the center of the background image.
+        /**
+          NOTE (Emil): Assumes that the center of the image is the most interesting.
+          Centers the circle segment over the center of the background image.
+        */
         context.translate(center.x, center.y);
         context.rotate(open + halfAngle - (Math.PI / 2));
         context.translate(-offset.x, -offset.y);
