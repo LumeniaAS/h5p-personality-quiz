@@ -20,6 +20,7 @@
   font-family: "Noto Sans", sans-serif;
   color: rgb(60, 62, 64);
   border: none;
+  box-sizing: border-box;
   margin: 0;
   padding: 0;
   text-transform: none;
@@ -144,6 +145,7 @@ button.h5p-personality-quiz {
   height: 100%;
   padding-top: 2.8em;
   padding: 2.8em 0.5em 0 0.5em;
+  box-sizing: border-box;
 }
 
 .h5p-personality-quiz.h5p-personality-quiz-progressbar {
@@ -188,12 +190,13 @@ button.h5p-personality-quiz {
 
 .h5p-personality-quiz .h5p-personality-quiz-answers {
   display: inline-block;
-  margin: 1em auto;
+  margin: 0 auto;
   list-style: none;
   width: 95%;
   text-align: center;
   height: 100%;
   padding: 0;
+  line-height: 1em;
 }
 
 .h5p-personality-quiz .h5p-personality-quiz-answer {
@@ -226,6 +229,7 @@ button.h5p-personality-quiz {
 
 .h5p-personality-quiz .h5p-personality-quiz-image-answers {
   list-style: none;
+  line-height: 1em;
 }
 
 .h5p-personality-quiz .h5p-personality-quiz-image-answer-image {
@@ -233,22 +237,28 @@ button.h5p-personality-quiz {
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
-  min-height: 10em;
 }
 
 .h5p-personality-quiz .h5p-personality-quiz-image-answer-button {
   border-radius: 0 0 5px 5px;
-  padding: 0.5em 0;
+  padding: 0.5em 0.1em;
   margin: 0;
   width: 100%;
   box-sizing: border-box;
   font-size: 1.2em;
+  display: table-cell;
+  width: inherit;
+  vertical-align: middle;
 }
 
+/*
+  NOTE (Emil): The height of this element (-personality-wrapper) is dependent
+  on the height of -ratake-button-wrapper.
+*/
 .h5p-personality-quiz .h5p-personality-quiz-personality-wrapper {
   text-align: center;
   padding: 1em;
-  height: 100%;
+  height: calc(100% - 5em);
 }
 
 .h5p-personality-quiz .h5p-personality-quiz-personality {
@@ -258,6 +268,9 @@ button.h5p-personality-quiz {
   background-color: rgba(233, 239, 247, 0.8);
   margin: 1em auto;
   border-radius: 5px;
+  position: relative;
+  top: 50%;
+  transform: translateY(-50%);
 }
 
 .h5p-personality-quiz .h5p-personality-quiz-center-personality {
@@ -283,9 +296,18 @@ button.h5p-personality-quiz {
 }
 
 .h5p-personality-quiz .h5p-personality-quiz-retake-button {
-  position: absolute;
-  bottom: 1em;
-  left: 1em;
+  margin: 0.5em 1em;
+}
+
+/*
+  NOTE (Emil): If the height of this element (retake-button-wrapper) is
+  changed then the height of the personality-wrapper should also be changed.
+*/
+.h5p-personality-quiz .h5p-personality-quiz-retake-button-wrapper {
+  display: inline-block;
+  position: relative;
+  width: 100%;
+  height: 5em;
 }
 
 .h5p-personality-quiz .h5p-personality-quiz-wheel-container {

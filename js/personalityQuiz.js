@@ -5,7 +5,7 @@ var H5P = H5P || {};
 
 
 
-H5P.PersonalityQuiz = (function ($) {
+H5P.PersonalityQuiz = (function ($, EventDispatcher) {
   /**
     A personality quiz.
 
@@ -30,10 +30,12 @@ H5P.PersonalityQuiz = (function ($) {
 
     var loadingImages = [];
 
-    var responsiveColumnThreshold = 600; // px
+    // NOTE (Emil): These constants are defined in pixels.
+    var responsiveColumnThreshold = 450;
+    var minimumHeight = 400;
 
     var canvas = {
-      id: classes('wheel'),
+      classname: classes('wheel'),
       width: 300,
       height: 300,
     };
@@ -42,6 +44,8 @@ H5P.PersonalityQuiz = (function ($) {
     var animation = ((body.style.animationName !== undefined) && params.animation);
 
     var resizeEventHandler = null;
+
+    EventDispatcher.call(self);
 
     /**
       Wrapper around H5P.getPath so as not to need id everywhere.
@@ -151,35 +155,6 @@ H5P.PersonalityQuiz = (function ($) {
     }
 
     /**
-      Calculates the height of the image on the result screen, if the
-      quiz uses the 'inline' result image option.
-
-      @param {jQuery} $container
-      @param {jQuery} $slide
-      @param {jQuery} $title
-      @param {jQuery} $description
-      @return {number} The maximum allowable height of the result image
-    */
-    function calculateResultImageHeight($container, $slide, $title, $description) {
-      function MakeInteger(string) { return parseInt(string, 10); }
-
-      // Get the retake button.
-      var $button = $slide.children('button');
-
-      var buttonHeight    = MakeInteger($button.height());
-      var bottom          = MakeInteger($button.css('bottom'));
-      var containerHeight = MakeInteger($container.height());
-
-      var titleHeight = $title ? MakeInteger($title.height()) : 0;
-      var descriptionHeight = $description ? MakeInteger($title.height()) : 0;
-
-      var bottomMargin = buttonHeight + bottom * 10;
-      var wrapperHeight = containerHeight - bottomMargin;
-
-      return wrapperHeight - (titleHeight + descriptionHeight);
-    }
-
-    /**
       Creates a canvas element and returns a canvas element.
 
       @return {jQuery}
@@ -190,8 +165,7 @@ H5P.PersonalityQuiz = (function ($) {
       });
 
       var $canvas = $('<canvas>', {
-        'class': classes('wheel-canvas'),
-        'id': canvas.id
+        'class': canvas.classname,
       });
 
       self.$canvas = $canvas;
@@ -299,7 +273,9 @@ H5P.PersonalityQuiz = (function ($) {
       @return {jQuery}
     */
     function createTitleCard(quiz, data, startText) {
-      var $card, $content, $title, $wrapper, $startButton, path;
+      var $card, $content, $title, $wrapper, $startButton, path, hasImage;
+
+      hasImage = data.image.file ? true : false;
 
       $card = $('<div>', { 'class': classes('title-card', 'slide', 'background') });
       $content = $('<div>', { 'class': classes('title-card-wrapper') });
@@ -308,9 +284,11 @@ H5P.PersonalityQuiz = (function ($) {
         'class': classes('title')
       });
 
-      path = _getPath(data.image.file.path);
+      if (hasImage) {
+        path = _getPath(data.image.file.path);
 
-      $card.css('background-image', 'url(' + path + ')');
+        $card.css('background-image', 'url(' + path + ')');
+      }
 
       $wrapper = $('<div>', { 'class': classes('start-button-wrapper') });
       $startButton = createButton('button', {
@@ -366,6 +344,7 @@ H5P.PersonalityQuiz = (function ($) {
 
       $slide.append($text);
 
+      // NOTE (Emil): We only make the answers show images if all the alternatives have images.
       images = true;
       question.answers.forEach(function (answer) { images = images && answer.image.file !== undefined; });
 
@@ -414,6 +393,7 @@ H5P.PersonalityQuiz = (function ($) {
       @param {jQuery} $container
       @param {jQuery} $elements
       @param {number} columns decides how many elements go in each row.
+      @param {number} [height] An optional height value for the row.
     */
     function attachRows($container, $elements, columns) {
       var $rows = $container.children(prefix('row', true));
@@ -531,8 +511,10 @@ H5P.PersonalityQuiz = (function ($) {
       @return {jQuery}
     */
     function createResult(quiz, data, retakeText) {
-      var $result  = $('<div>', { 'class': classes('result', 'slide') });
-      var $wrapper = $('<div>', { 'class': classes('personality-wrapper') });
+      var $result    = $('<div>', { 'class': classes('result', 'slide')       });
+      var $wrapper   = $('<div>', { 'class': classes('personality-wrapper')   });
+      var $container = $('<div>', { 'class': classes('retake-button-wrapper') });
+
       var $button  = createButton('button', {
         'html': retakeText,
         'class': classes('button', 'retake-button'),
@@ -543,9 +525,12 @@ H5P.PersonalityQuiz = (function ($) {
         quiz.trigger('personality-quiz-restart');
       });
 
+      $container.append($button);
+
       self.$resultWrapper = $wrapper;
-      $result.append($button);
+
       $result.append($wrapper);
+      $result.append($container);
 
       return $result;
     }
@@ -561,7 +546,7 @@ H5P.PersonalityQuiz = (function ($) {
       var path = _getPath(personality.image.file.path);
       var classNames = [
         prefix('background'),
-        prefix('center-persoanlity-wrapper'),
+        prefix('center-personality-wrapper'),
       ];
 
       $result.css('background-image', 'url(' + path + ')');
@@ -588,6 +573,31 @@ H5P.PersonalityQuiz = (function ($) {
       return $element;
     }
 
+
+    /**
+      Sets the height of the inline personality image.
+
+      @param {jQuery} $wrapper
+      @param {jQuery} $personality
+      @param {jQuery} $image
+    */
+    function setInlineImageHeight ($image, $personality, $wrapper) {
+      var em, height;
+
+      if (!$image) {
+        return;
+      }
+
+      $image.hide();
+
+      em = parseFloat($wrapper.css('font-size'));
+      height = $wrapper.height() - $personality.height() - 4 * em;
+
+      $image.show();
+
+      $image.css('height', height + 'px');
+    }
+
     /**
       Appends the personality information to the result slide.
 
@@ -599,14 +609,17 @@ H5P.PersonalityQuiz = (function ($) {
     */
     function appendPersonality(quiz, personality, hasTitle, hasImage, hasDescription) {
       var $personality, $title, $description, $image;
-      var height;
 
       $title = createIf(hasTitle, '<h2>', { 'html': personality.name });
-      $image = createIf(hasImage, '<img>', {
-        'class': classes('result-image'),
-        'src': _getPath(personality.image.file.path),
-        'alt': personality.image.alt
-      });
+
+      if (personality.image.file) {
+        $image = createIf(hasImage, '<img>', {
+          'class': classes('result-image'),
+          'src': _getPath(personality.image.file.path),
+          'alt': personality.image.alt
+        });
+      }
+
       $description = createIf(hasDescription, '<p>', {
         'html': personality.description
       });
@@ -623,17 +636,7 @@ H5P.PersonalityQuiz = (function ($) {
 
       quiz.$resultWrapper.append($personality);
 
-      // NOTE (Emil): Have to wait until everything is added to the DOM.
-      if ($image) {
-          height = calculateResultImageHeight(
-              quiz.$container,
-              quiz.$result,
-              $title,
-              $description
-          );
-
-          $image.css('height', height);
-      }
+      setInlineImageHeight($image, $personality, quiz.$resultWrapper);
 
       return $personality;
     }
@@ -665,19 +668,23 @@ H5P.PersonalityQuiz = (function ($) {
       self.trigger('personality-quiz-answer', personalities);
     }
 
-    /**
-      Resize event handler.
 
-      @param {Object} event The resize event object.
+    /**
+      Resize the questions with image answers.
     */
-    function resize() {
-      var rowCount;
-      var columns = getNumColumns();
-      var $answers = $(prefix('image-answers', true));
-      var $alternatives, $rows;
+    function resizeColumns() {
+      var rowCount, columns;
+      var $answers, $rows, $quiz;
+
+      $quiz = self.$wrapper;
+
+      columns = getNumColumns();
+      $answers = $quiz.find(prefix('image-answers', true));
 
       $answers.each(function () {
-        var $answer = $(this);
+        var $answer, $slide, $alternatives;
+
+        $answer = $(this);
 
         $rows = $answer.children(prefix('row', true));
         $alternatives = $rows.children(prefix('column', true));
@@ -695,6 +702,118 @@ H5P.PersonalityQuiz = (function ($) {
         }
 
         attachRows($answer, $alternatives, columns);
+
+        // NOTE (Emil): Update the selection after changes.
+        $rows = $answer.children(prefix('row', true));
+        $slide = $answer.parent().parent();
+        var titleHeight = $slide.children(prefix('question-text', true)).outerHeight(true) || 0;
+        var imageHeight = $slide.children(prefix('question-image', true)).outerHeight(true) || 0;
+
+        var height = $slide.height() - (titleHeight + imageHeight);
+
+        setAnswerImageHeight($rows, Math.floor(height / $rows.length));
+      });
+    }
+
+    /**
+      Resize the result screen.
+    */
+    function resizeResult($quiz) {
+      var $wrapper, $personality, $image;
+
+      $wrapper = self.$resultWrapper;
+      $personality = $quiz.find(prefix('personality'));
+      $image = $quiz.find(prefix('result-image'));
+
+      setInlineImageHeight($image, $personality, $wrapper);
+    }
+
+    /**
+      Resize event handler.
+
+      @param {Object} event The resize event object.
+    */
+    function resize() {
+      resizeColumns(self.$wrapper);
+      resizeResult(self.$wrapper);
+    }
+
+    /**
+      Calculate and set the height of the slides in the quiz.
+
+      @param {Object} self The quiz object
+      @param {jQuery} $quiz The container for the entire quiz
+    */
+    function setQuizHeight(self, $quiz) {
+      var height = 0;
+
+      self.$slides.each(function (index, element) {
+        var $slide, $image;
+        var h = 0;
+
+        $slide = $(element);
+        $image = $slide.children(prefix('question-image', true));
+
+        $image.hide();
+
+        if (this.clientHeight > height)
+        {
+          h = $(this).height();
+
+          if ($image) { h = h * 1.3; }
+
+          height = h;
+        }
+
+        $image.show();
+      });
+
+      height = Math.max(height, minimumHeight);
+
+      $quiz.height(height);
+    }
+
+    /**
+      Set the height of all images attached to answer alternatives.
+
+      @param {jQuery} $quiz The root of the quiz
+    */
+    function setAnswerImageHeight($rows, maxRowHeight) {
+      $rows.each(function () {
+        var buttonHeight, imageHeight, heights, ideal;
+        var $row, $columns, $buttons, $images;
+
+        $row = $(this);
+        $columns = $row.children();
+
+        ideal = Math.floor($columns.width() * (9.0 / 16.0));
+
+        $buttons = $columns.children(prefix('image-answer-button', true));
+        $images = $columns.children(prefix('image-answer-image', true));
+
+        heights = $buttons.map(function (i, e) {
+          var $e = $(e);
+
+          // NOTE (Emil): Unset previous height calculations.
+          $e.css('height', '');
+
+          return $e.height();
+        });
+
+        buttonHeight = Math.max.apply(null, heights);
+        imageHeight = ideal;
+
+        // NOTE (Emil): We set the height of the button and the image.
+        $buttons.height(buttonHeight);
+        $images.height(ideal);
+
+        // If the size of the containing box is larger than the limit set by
+        // maxRowHeight we subtract the difference from the height of the image.
+        if (maxRowHeight && $columns.outerHeight() > maxRowHeight) {
+          imageHeight -= ($columns.outerHeight() - maxRowHeight);
+        }
+
+        $images.height(imageHeight);
       });
     }
 
@@ -714,7 +833,7 @@ H5P.PersonalityQuiz = (function ($) {
       $container.append($quiz);
 
       // NOTE (Emil): We only want to do the work for a resize event once.
-      // Only the resizeevent call that survives 100 ms is called.
+      // Only the resize event call that survives 100 ms is called.
       $(window).resize(function () {
         clearTimeout(resizeEventHandler);
         resizeEventHandler = setTimeout(resize, 100);
@@ -723,29 +842,21 @@ H5P.PersonalityQuiz = (function ($) {
       // NOTE (Emil): Wait for images to load, if there are any.
       // If there aren't any images to wait for this function is called immediately.
       $.when.apply(null, loadingImages).done(function () {
-          var height = 0;
+        setAnswerImageHeight($quiz.find(prefix('row', true)));
+        setQuizHeight(self, $quiz);
 
-          self.$slides.each(function () {
-            if (this.clientHeight > height)
-            {
-              height = this.clientHeight;
-            }
-          });
+        if (animation && params.resultScreen.animation === 'wheel') {
+          canvas.width = $container.width() * 0.8;
+          canvas.height = $container.height();
 
-          $quiz.height(height);
-
-          if (animation && params.resultScreen.animation === 'wheel') {
-            canvas.width = $container.width() * 0.8;
-            canvas.height = $container.height();
-
-            self.wheel = new PersonalityQuiz.WheelAnimation(
-                self,
-                self.personalities,
-                canvas.width,
-                canvas.height,
-                _getPath
-            );
-          }
+          self.wheel = new PersonalityQuiz.WheelAnimation(
+            self,
+            self.personalities,
+            canvas.width,
+            canvas.height,
+            _getPath
+          );
+        }
       });
     }
 
@@ -976,8 +1087,8 @@ H5P.PersonalityQuiz = (function ($) {
     });
   }
 
-  PersonalityQuiz.prototype = Object.create(H5P.EventDispatcher.prototype);
+  PersonalityQuiz.prototype = Object.create(EventDispatcher);
   PersonalityQuiz.prototype.constructor = PersonalityQuiz;
 
   return PersonalityQuiz;
-})(H5P.jQuery);
+})(H5P.jQuery, H5P.EventDispatcher);
