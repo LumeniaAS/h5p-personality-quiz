@@ -19,6 +19,7 @@ var H5P = H5P || {};
     var side = Math.min(width, height);
     var min = 320;
     var max = 800;
+    var hasImages = true;
 
     self.width = clamp(side, min, max);
     self.height = clamp(side, min, max);
@@ -52,8 +53,12 @@ var H5P = H5P || {};
 
     self.images = [];
 
+    self.personalities.forEach(function (personality) {
+      hasImages = (hasImages && personality.image.file);
+    });
+
     // NOTE (Emil): Prerender the wheel.
-    if (self.personalities[0].image.file) {
+    if (hasImages) {
       load();
     }
     else {
@@ -261,12 +266,10 @@ var H5P = H5P || {};
           offset.y = (personality.image.file.height - radius) / 2;
         }
 
+        // NOTE (Emil): Assumes that the center of the image is the most interesting.
         context.save();
 
-        /**
-          NOTE (Emil): Assumes that the center of the image is the most interesting.
-          Centers the circle segment over the center of the background image.
-        */
+        // NOTE (Emil): Center the circle segment over the center of the background image.
         context.translate(center.x, center.y);
         context.rotate(open + halfAngle - (Math.PI / 2));
         context.translate(-offset.x, -offset.y);
