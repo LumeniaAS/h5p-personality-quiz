@@ -87,7 +87,7 @@ button.h5p-personality-quiz {
 
 .h5p-personality-quiz .h5p-personality-quiz-fade-in {
   animation-name: fade-in;
-  animation-duration: 1s;
+  animation-duration: 1.2s;
 }
 
 .h5p-personality-quiz .h5p-personality-quiz-fade-out {

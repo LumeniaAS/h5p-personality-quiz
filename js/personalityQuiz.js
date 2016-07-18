@@ -1060,7 +1060,7 @@ H5P.PersonalityQuiz = (function ($, EventDispatcher) {
       self.setResult(personality);
 
       if (animation && self.resultAnimation === 'fade-in') {
-        self.$result.addClass('fade-in');
+        self.$result.addClass(prefix('fade-in'));
       }
     });
 
