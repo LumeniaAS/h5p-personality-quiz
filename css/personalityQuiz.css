@@ -35,7 +35,7 @@
   font-size: 62.5%;
 }
 
-p.h5p-personality-quiz {
+.h5p-personality-quiz p {
   margin: 0;
   color: rgb(60, 62, 64);
   font-size: 1.5em;
@@ -233,22 +233,31 @@ button.h5p-personality-quiz {
 }
 
 .h5p-personality-quiz .h5p-personality-quiz-image-answer-image {
-  border-radius: 5px 5px 0 0;
-  background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
+  background-size: cover;
+  border-radius: 5px 5px 0 0;
 }
 
 .h5p-personality-quiz .h5p-personality-quiz-image-answer-button {
   border-radius: 0 0 5px 5px;
   padding: 0.5em 0.1em;
   margin: 0;
-  width: 100%;
+  min-width: 100%;
   box-sizing: border-box;
   font-size: 1.2em;
-  display: table-cell;
+  display: inline-block;
   width: inherit;
   vertical-align: middle;
+}
+
+.h5p-personality-quiz-image-answer-button > p {
+  margin: 0;
+  padding: 0;
+  font-size: 1em;
+  position: relative;
+  top: 50%;
+  transform: translateY(-50%);
 }
 
 /*
@@ -266,7 +275,7 @@ button.h5p-personality-quiz {
   width: 80%;
   padding: 1em;
   background-color: rgba(233, 239, 247, 0.8);
-  margin: 1em auto;
+  margin: 0 auto;
   border-radius: 5px;
   position: relative;
   top: 50%;

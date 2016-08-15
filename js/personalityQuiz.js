@@ -40,6 +40,9 @@ H5P.PersonalityQuiz = (function ($, EventDispatcher) {
       height: 300,
     };
 
+    var $iframe = $(window.parent.document.querySelector('#h5p-iframe-' + id));
+    var $content = $('.h5p-content');
+
     var body = document.querySelector('body');
     var animation = ((body.style.animationName !== undefined) && params.animation);
 
@@ -401,7 +404,7 @@ H5P.PersonalityQuiz = (function ($, EventDispatcher) {
       $rows.each(function (index) {
         var $row = $(this);
         var start = (index) * columns;
-        var end = (index + 1) * columns;
+        var end = start + columns;
 
         $row.append($elements.slice(start, end));
       });
@@ -435,7 +438,6 @@ H5P.PersonalityQuiz = (function ($, EventDispatcher) {
 
       $elements = answers.map(function (answer) {
         var $answer, $button, $image;
-
         var path = _getPath(answer.image.file.path);
 
         $answer = $('<div>', {
@@ -449,13 +451,11 @@ H5P.PersonalityQuiz = (function ($, EventDispatcher) {
         });
 
         $image = $('<div>', {
-          'class': classes('image-answer-image'),
+          'class': classes('image-answer-image')
         });
-
         $image.css('background-image', 'url(' + path + ')');
 
         $answer.append($image, $button);
-
         $answer.click(listener);
 
         return $answer;
@@ -514,8 +514,7 @@ H5P.PersonalityQuiz = (function ($, EventDispatcher) {
       var $result    = $('<div>', { 'class': classes('result', 'slide')       });
       var $wrapper   = $('<div>', { 'class': classes('personality-wrapper')   });
       var $container = $('<div>', { 'class': classes('retake-button-wrapper') });
-
-      var $button  = createButton('button', {
+      var $button    = createButton('button', {
         'html': retakeText,
         'class': classes('button', 'retake-button'),
         'type': 'button'
@@ -527,7 +526,7 @@ H5P.PersonalityQuiz = (function ($, EventDispatcher) {
 
       $container.append($button);
 
-      self.$resultWrapper = $wrapper;
+      quiz.$resultWrapper = $wrapper;
 
       $result.append($wrapper);
       $result.append($container);
@@ -581,8 +580,8 @@ H5P.PersonalityQuiz = (function ($, EventDispatcher) {
       @param {jQuery} $personality
       @param {jQuery} $image
     */
-    function setInlineImageHeight ($image, $personality, $wrapper) {
-      var em, height;
+    function setInlineImageHeight ($image, $personality, $resultWrapper) {
+      var height;
 
       if (!$image) {
         return;
@@ -590,12 +589,10 @@ H5P.PersonalityQuiz = (function ($, EventDispatcher) {
 
       $image.hide();
 
-      em = parseFloat($wrapper.css('font-size'));
-      height = $wrapper.height() - $personality.height() - 4 * em;
+      height = $resultWrapper.outerHeight() - $personality.outerHeight(true);
 
+      $image.css({'height': 'calc(' + height + 'px - 4 * 1em)'});
       $image.show();
-
-      $image.css('height', height + 'px');
     }
 
     /**
@@ -672,20 +669,17 @@ H5P.PersonalityQuiz = (function ($, EventDispatcher) {
     /**
       Resize the questions with image answers.
     */
-    function resizeColumns() {
+    function resizeColumns($quiz) {
       var rowCount, columns;
-      var $answers, $rows, $quiz;
-
-      $quiz = self.$wrapper;
+      var $answers, $rows;
 
       columns = getNumColumns();
-      $answers = $quiz.find(prefix('image-answers', true));
 
+      $answers = $quiz.find(prefix('image-answers', true));
       $answers.each(function () {
         var $answer, $slide, $alternatives;
 
         $answer = $(this);
-
         $rows = $answer.children(prefix('row', true));
         $alternatives = $rows.children(prefix('column', true));
 
@@ -711,7 +705,7 @@ H5P.PersonalityQuiz = (function ($, EventDispatcher) {
 
         var height = $slide.height() - (titleHeight + imageHeight);
 
-        setAnswerImageHeight($rows, Math.floor(height / $rows.length));
+        setAnswerImageHeight($rows, height / $rows.length);
       });
     }
 
@@ -725,7 +719,7 @@ H5P.PersonalityQuiz = (function ($, EventDispatcher) {
       $personality = $quiz.find(prefix('personality'));
       $image = $quiz.find(prefix('result-image'));
 
-      setInlineImageHeight($image, $personality, $wrapper);
+      setInlineImageHeight($image, $personality, self.$resultWrapper);
     }
 
     /**
@@ -771,6 +765,8 @@ H5P.PersonalityQuiz = (function ($, EventDispatcher) {
       height = Math.max(height, minimumHeight);
 
       $quiz.height(height);
+
+      self.height = height;
     }
 
     /**
@@ -779,41 +775,40 @@ H5P.PersonalityQuiz = (function ($, EventDispatcher) {
       @param {jQuery} $quiz The root of the quiz
     */
     function setAnswerImageHeight($rows, maxRowHeight) {
+      var ratio = 9.0 / 16.0;
+      var numColumns = getNumColumns();
+
       $rows.each(function () {
-        var buttonHeight, imageHeight, heights, ideal;
+        var imageHeight, heights, width;
         var $row, $columns, $buttons, $images;
 
         $row = $(this);
         $columns = $row.children();
 
-        ideal = Math.floor($columns.width() * (9.0 / 16.0));
-
         $buttons = $columns.children(prefix('image-answer-button', true));
         $images = $columns.children(prefix('image-answer-image', true));
+
+        width = (self.$wrapper.width() / numColumns);
+        imageHeight = Math.floor(width * ratio);
 
         heights = $buttons.map(function (i, e) {
           var $e = $(e);
 
-          // NOTE (Emil): Unset previous height calculations.
-          $e.css('height', '');
+          $e.css('height', ''); // NOTE (Emil): Unset previous height calculations.
 
           return $e.height();
         });
 
-        buttonHeight = Math.max.apply(null, heights);
-        imageHeight = ideal;
-
-        // NOTE (Emil): We set the height of the button and the image.
-        $buttons.height(buttonHeight);
-        $images.height(ideal);
+        $buttons.height(Math.max.apply(null, heights));
+        $images.height(imageHeight);
 
         // If the size of the containing box is larger than the limit set by
         // maxRowHeight we subtract the difference from the height of the image.
         if (maxRowHeight && $columns.outerHeight() > maxRowHeight) {
           imageHeight -= ($columns.outerHeight() - maxRowHeight);
-        }
 
-        $images.height(imageHeight);
+          $images.height(imageHeight);
+        }
       });
     }
 
@@ -826,6 +821,7 @@ H5P.PersonalityQuiz = (function ($, EventDispatcher) {
     */
     function attach($container) {
       loadingImages = [];
+
       self.reset();
 
       var $quiz = createQuiz(self, params);
@@ -857,6 +853,8 @@ H5P.PersonalityQuiz = (function ($, EventDispatcher) {
             _getPath
           );
         }
+
+        $iframe.height($content.outerHeight(true));
       });
     }
 
@@ -974,25 +972,21 @@ H5P.PersonalityQuiz = (function ($, EventDispatcher) {
       @param {Object} event
     */
     self.answerListener = function (event) {
-      var $target = $(event.target);
-      var $button = $target;
+      var $target, $button;
+      var isImage, isButton, buttonListener, personalities;
 
-      var imageButtonClass = prefix('image-answer-button');
+      $target = $(event.target);
+      $button = $target;
 
-      var isImage = $target.hasClass(prefix('image-answer-image'));
-      var isImageButton = $target.hasClass(imageButtonClass);
+      isImage = $target.hasClass(prefix('image-answer-image'));
+      isButton = $target.hasClass(prefix('image-answer-button'));
 
-      var buttonListener = animatedButtonListener;
+      buttonListener = animatedButtonListener;
 
-      // NOTE (Emil): If the $target is the image part of the button,
-      // we simply move to the only sibling.
-      $button = isImage ? $target.siblings().eq(0) : $target;
+      $button = isImage ? $target.siblings().eq(0) : $button;
+      $target = (isButton || isImage) ? $target.parent() : $target;
 
-      // NOTE (Emil): If the target is part of an image answer we need to
-      // move to the parent to get the personalities.
-      $target = (isImageButton || isImage) ? $target.parent() : $target;
-
-      var personalities = $target.attr('data-personality');
+      personalities = $target.attr('data-personality');
 
       if (personalities) {
         buttonListener  = animation ? animatedButtonListener : nonAnimatedButtonListener;
