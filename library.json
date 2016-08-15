@@ -8,6 +8,9 @@
   "runnable": 1,
   "author": "Lumenia AS",
   "license": "MIT",
+  "embedTypes": [
+    "iframe"
+  ],
   "preloadedJs": [
     {
       "path": "js/personalityQuiz.js"
