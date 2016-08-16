@@ -174,7 +174,6 @@ H5P.PersonalityQuiz = (function ($, EventDispatcher) {
       self.$canvas = $canvas;
 
       $wrapper.append($canvas);
-      $wrapper.hide();
 
       return $wrapper;
     }
@@ -211,8 +210,6 @@ H5P.PersonalityQuiz = (function ($, EventDispatcher) {
       }
 
       $result = createResult(quiz, data.resultScreen, data.retakeText);
-
-      $result.hide();
 
       $slides.append($result);
       $container.append($bar, $slides);
