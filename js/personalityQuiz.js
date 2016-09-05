@@ -40,7 +40,6 @@ H5P.PersonalityQuiz = (function ($, EventDispatcher) {
       height: 300,
     };
 
-    var $iframe = $(window.parent.document.querySelector('#h5p-iframe-' + id));
     var $content = $('.h5p-content');
 
     var body = document.querySelector('body');
@@ -851,7 +850,7 @@ H5P.PersonalityQuiz = (function ($, EventDispatcher) {
           );
         }
 
-        $iframe.height($content.outerHeight(true));
+        self.trigger('resize');
       });
     }
 
